@@ -28,6 +28,9 @@ RUN sed -i "/listen = .*/c\listen = [::]:9000" /etc/php/7.0/fpm/pool.d/www.conf 
     && sed -i "/error_log = .*/c\error_log = /proc/self/fd/2" /etc/php/7.0/fpm/php-fpm.conf \
     && usermod -u 1000 www-data
 
+ADD ./site.ini /usr/local/etc/php/conf.d
+ADD ./site.pool.conf /etc/php5/fpm/pool.d/site.conf
+
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     libmemcached-dev \
@@ -69,8 +72,8 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # Assign working directory
 WORKDIR /var/www/site
 
+CMD ["php-fpm"]
+#CMD ["/usr/sbin/php-fpm7.0"]
+
 # Expose FastCGI port.
 EXPOSE 9000
-
-#CMD ["php-fpm"]
-CMD ["/usr/sbin/php-fpm7.0"]
